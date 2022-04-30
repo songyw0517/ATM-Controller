@@ -10,7 +10,6 @@ else:
     from controller import AtmControllerBase
     from model.AtmModel import AtmModel
     from DTO import Account
-    from config import Config
     
 
 class AtmController(AtmControllerBase):
@@ -18,9 +17,29 @@ class AtmController(AtmControllerBase):
         super().__init__()
         self.pin_regex = None
         self.atm_model = atm_model
-        
 
-    # Config와의 의존성을 분리하기 위한 regex 포맷 설정
+    """ 계정을 등록합니다. """
+    def register_account(self, pin_number:str, account:str, balance:int):
+        if type(pin_number) is not str:
+            raise ValueError('pin_number은 str형입니다.')
+        if type(account) is not str:
+            raise ValueError('account는 str형입니다.')
+        if type(balance) is not int:
+            raise ValueError('balance는 int형입니다.')
+        
+        if not self.validate_pin_number_format(pin_number):
+            raise ValueError('pin_number 포맷이 일치하지 않습니다.')
+        accounts = self.atm_model.find_by_pin_num(pin_number)
+        for acc in accounts:
+            if acc.__dict__['_Account__account']==account:
+                raise ValueError('account가 중복됩니다.')
+        if balance < 0:
+            raise ValueError('balance는 양의 정수입니다.')
+        
+        new_account = self.atm_model.save_account(pin_number, account, balance)
+
+        return new_account
+
     """
     pin 번호의 정규식을 설정합니다.
     - pin_format을 딕셔너리로 받아 클래스 내의 정규식을 설정합니다.
@@ -41,26 +60,7 @@ class AtmController(AtmControllerBase):
                 break
             self.pin_regex+=pin_format['split']
 
-    """ 계정을 등록합니다. """
-    def register_account(self, pin_number:str, account:str, balance:int):
-        if type(pin_number) is not str:
-            raise ValueError('pin_number은 str형입니다.')
-        if type(account) is not str:
-            raise ValueError('account는 str형입니다.')
-        if type(balance) is not int:
-            raise ValueError('balance는 int형입니다.')
-        if not self.validate_pin_number_format(pin_number):
-            raise ValueError('pin_number 포맷이 일치하지 않습니다.')
-        accounts = self.atm_model.find_by_pin_num(pin_number)
-        for acc in accounts:
-            if acc.__dict__['_Account__account']==account:
-                raise ValueError('account가 중복됩니다.')
-        if balance < 0:
-            raise ValueError('balance는 양의 정수입니다.')
-        
-        new_account = self.atm_model.save_account(pin_number, account, balance)
-
-        return new_account
+    
 
     """ pin 번호 포맷을 검증합니다. """
     def validate_pin_number_format(self, pin_number:str):
@@ -69,25 +69,20 @@ class AtmController(AtmControllerBase):
         if self.pin_regex is None:
             raise ValueError('pin_regex가 정의되지 않았습니다.')
 
-        # 설정된 정규식 패턴에 일치하면 True를 반환합니다.
+        # 검증이 완료되면, 해당 핀번호에 해당하는 계정을 반환합니다.
         if re.fullmatch(self.pin_regex, pin_number):
             return True
         else:
             return False
     
-    """ 검증된 핀 번호로 계정을 반환합니다."""
-    def findAccountByValidaePin(self, pin_number:str):
-        if type(pin_number) is not str:
-            raise ValueError('pin_number은 str형입니다.')
-
-        """ pin 번호를 검증합니다."""
+    def get_account_by_validate_pin_number(self, pin_number:str):
         if self.validate_pin_number_format(pin_number):
             accounts = self.atm_model.find_by_pin_num(pin_number)
             return accounts
         else:
             raise ValueError("pin_number의 포맷이 다릅니다.")
 
-    def findAccountByAccount(self, account):
+    def find_account(self, account):
         return self.atm_model.find_by_account(account)
 
     """ 입금을 계산하여 반환합니다. """
@@ -99,7 +94,7 @@ class AtmController(AtmControllerBase):
         if money<0:
             raise ValueError('money는 양의 정수입니다.')
         
-        find_account = self.findAccountByAccount(account)
+        find_account = self.find_account(account)
         balance = find_account.balance + money
         self.atm_model.update_balance_by_account(account, balance)
         return balance
@@ -114,7 +109,7 @@ class AtmController(AtmControllerBase):
         if money<0:
             raise ValueError('money는 양의 정수입니다.')
 
-        find_account = self.findAccountByAccount(account)        
+        find_account = self.find_account(account)        
         # 출금 계산
         balance = find_account.balance - money
 
