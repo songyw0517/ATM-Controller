@@ -20,21 +20,22 @@ class AtmController(AtmControllerBase):
 
     """ 계정을 등록합니다. """
     def register_account(self, pin_number:str, account:str, balance:int):
-        if type(pin_number) is not str:
-            raise ValueError('pin_number은 str형입니다.')
-        if type(account) is not str:
-            raise ValueError('account는 str형입니다.')
-        if type(balance) is not int:
-            raise ValueError('balance는 int형입니다.')
-        
+        # TypeError, ValueError handling
+        if not isinstance(pin_number, str):
+            raise TypeError('pin_number type is str, but now pin_number type is %s'%type(pin_number))
+        if not isinstance(account, str):
+            raise TypeError('account type is str, but now account type is %s'%type(account))
+        if not isinstance(balance, int):
+            raise TypeError('balance type is int, but now balance type is %s'%type(balance))
         if not self.validate_pin_number_format(pin_number):
-            raise ValueError('pin_number 포맷이 일치하지 않습니다.')
+            raise ValueError('"pin_number format" not match "set format"')
+
         accounts = self.atm_model.find_by_pin_num(pin_number)
         for acc in accounts:
             if acc.__dict__['_Account__account']==account:
-                raise ValueError('account가 중복됩니다.')
+                raise ValueError('%s is already exist. (duplicate)'%account)
         if balance < 0:
-            raise ValueError('balance는 양의 정수입니다.')
+            raise ValueError('balance is positive integer')
         
         new_account = self.atm_model.save_account(pin_number, account, balance)
 
