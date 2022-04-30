@@ -47,7 +47,7 @@ class AtmControllerTest(TestCase):
         pin_number = 0
         account = 'song'
         balance = 1000000
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             controller.register_account(pin_number, account, balance)
 
         # 테스트 2. account가 str이 아닌 경우
@@ -56,7 +56,7 @@ class AtmControllerTest(TestCase):
         pin_number = '111-222-333333'
         account = 0
         balance = 1000000
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             controller.register_account(pin_number, account, balance)
 
         # 테스트 3. balance가 int가 아닌 경우
@@ -65,7 +65,7 @@ class AtmControllerTest(TestCase):
         pin_number = '111-222-333333'
         account = 'song'
         balance = '1000000'
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             controller.register_account(pin_number, account, balance)
 
         # 테스트 4. pin_number의 포맷이 일치하지 않은 아닌 경우
