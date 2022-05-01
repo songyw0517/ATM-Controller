@@ -99,7 +99,7 @@ controller.get_account_by_validate_pin_number('111-222-333333')))))
 '''
 ```
 
-### 계정에 해당하는 계정 반환
+### 계정에 해당하는 계정 반환 (find_account)
 - 입력한 계정에 대한 데이터를 가져오는 기능입니다.
 - 데이터가 잘 저장되었는지 확인하기 위한 기능입니다.
 ``` python
@@ -121,7 +121,7 @@ sel_account = accounts[1]
 print(controller.find_account(sel_account).__dict__)
 ```
 
-### 입금
+### 입금 (deposit)
 - 계정과 입금할 금액을 입력받아 기능을 수행합니다.
 - 입력값에 대한 Type, Value 검증을 수행합니다.
 - 입금 계산 이후, Model을 통해 데이터를 업데이트합니다.
@@ -146,7 +146,7 @@ sel_account = accounts[1]
 controller.deposit(sel_account, 10000)
 ```
 
-### 출금
+### 출금 (withdraw)
 - 계정과 출금할 금액을 입력받아 기능을 수행합니다.
 - 입력값에 대한 Type, Value 검증을 수행합니다.
 - 출금 계산 이후, Model을 통해 데이터를 업데이트합니다.
@@ -174,7 +174,7 @@ controller.withdraw(sel_account, 10000)
 print(controller.withdraw(sel_account, 10000000))
 ```
 
-### 잔액 조회
+### 잔액 조회 (get_balance)
 - 계정을 입력받아 계정의 잔액을 반환합니다.
 - 입력한 값의 Type을 검증합니다.
 - 검증 이후, 계정의 잔액을 반환합니다.
@@ -274,3 +274,47 @@ model.update_balance_by_account(find_account, 0)
 find_account = model.find_by_account(find_account)
 print(find_account.balance)
 ```
+
+## 4. 테스트
+unittest 모듈을 사용하여 테스트를 수행합니다.
+
+## AtmController 테스트
+- AtmController의 메소드들을 테스트합니다.
+- 각 테스트는 잘못된 데이터 입력에 대해 Type, Value Error를 일으키는지 확인하며 기능을 제대로 수행했는지 확인합니다.
+- test\AtmControllerTest.py를 실행시켜 테스트를 할 수 있습니다.
+
+### test_validate_pin_number_format
+- 핀번호 검증 메소드를 테스트합니다.
+- 테스트에서는 XXX-XXX-XXXXXX의 핀번호 포맷을 설정했으나 <br>100개의 테스트 케이스는 XX-XXX-XXXX의 포맷을 갖기에 모두 일치하지 않습니다. <br> 따라서 모두 False를 반환하는지 확인합니다.
+
+### test_register_account
+- 계정 등록 메소드를 테스트합니다.
+- 1 : 입력값에 대한 검증을 수행했는지 테스트합니다.
+- 2 : 핀번호의 포맷이 일치하는지 테스트합니다.
+- 3 : 중복된 계정일 때 에러가 발생하는지 확인합니다.
+- 4 : 계정이 등록되었는지 확인합니다.
+
+### test_set_pin_regex
+- 핀번호 포맷 정규식 설정 메소드를 테스트합니다.
+- 1 : 입력값에 대한 검증을 수행했는지 테스트합니다.
+- 2 : 핀포맷이 제대로 설정되었는지 테스트합니다.
+
+### test_validate_pin_number_format
+- 핀번호 포맷 검증 메소드를 테스트합니다.
+- 1 : 입력값에 대한 검증을 수행했는지 테스트합니다.
+- 2 : 핀포맷이 설정되었는지 테스트합니다.
+
+### test_deposit
+- 입금 메소드를 테스트합니다.
+- 1 : 입력값에 대한 검증을 수행했는지 테스트합니다.
+- 2 : 임의의 100개의 테스트를 통과하는지 테스트합니다.
+
+### test_withdraw
+- 출금 메소드를 테스트합니다.
+- 1 : 입력값에 대한 검증을 수행했는지 테스트합니다.
+- 2 : 잔액이 부족할 경우 '잔액이 부족합니다' 문자열을 반환하는지 테스트합니다.
+- 3 : 임의의 100개의 테스트를 통과하는지 테스트합니다.
+
+### test_get_balance
+- 잔액 반환 메소드를 테스트합니다.
+- 1 : 입력값에 대한 검증을 수행했는지 테스트합니다.
