@@ -1,4 +1,5 @@
 # ATM Controller 사용방법
+과제에서의 Sample Code는 ATM\app.py에 명시되어있습니다.
 
 ## 1. 의존성 분리
 > 프로젝트 구현에 앞서 Endpoint Side, Controller, Model 간의 의존성을 분리하기 위해 다음과 같은 구조로 ATM Controller을 설계했습니다.
