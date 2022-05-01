@@ -26,8 +26,6 @@ class app:
             print(account.__dict__['_Account__account'], end='\t')
             print(account.__dict__['_Account__balance'])
             
-
-
         # 계정 선택하기
         sel_account = accounts[1]
         print('현재 계정')
