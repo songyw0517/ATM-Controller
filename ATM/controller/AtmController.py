@@ -92,6 +92,8 @@ class AtmController(AtmControllerBase):
 
     """ account에 해당하는 계정을 반환합니다. """
     def find_account(self, account):
+        if type(account) is not Account:
+            raise TypeError('account type is Account, but now account type is %s'%type(account))
         return self.atm_model.find_by_account(account)
 
     """ 입금을 계산하여 반환합니다. """
