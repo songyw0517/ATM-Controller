@@ -17,9 +17,7 @@ class AtmModel(AtmModelBase):
     계정을 생성하고 저장합니다.
     입력된 변수는 컨트롤러에 의해 검증되었습니다.
     """
-    def save_account(self, pin_number, account, balance):  
-        
-              
+    def save_account(self, pin_number, account, balance):
         new_account = Account(pin_number, account, balance)
         self.repository.append(new_account)
         return new_account
@@ -55,12 +53,7 @@ class AtmModel(AtmModelBase):
         find_account.balance = balance
         return account
 
-    """ 모든 계정을 반환합니다. """
-    def show_all(self):
-        result = []
-        for account in self.repository:
-            result.append(account.__dict__)
-        return result
+
 
 if __name__ == '__main__':
     atm_model = AtmModel()
