@@ -4,8 +4,8 @@
 > 프로젝트 구현에 앞서 Endpoint Side, Controller, Model 간의 의존성을 분리하기 위해 다음과 같은 구조로 ATM Controller을 설계했습니다.
 - <b>Endpoint Side</b> : 필요한 기능을 Controller에 요청합니다.
 
-- <b>Controller</b> : Endpoint Side와 Model 사이에서 기능을 수행합니다. 
-주로 Endpoint Side에서의 요청을 수행하고 반환하며, 
+- <b>Controller</b> : Endpoint Side와 Model 사이에서 기능을 수행합니다.<br>
+주로 Endpoint Side에서의 요청을 수행하고 반환하며,<br>
 요청이 Model과 관련된 것이라면 Model에 기능을 요청합니다.
 
 - <b>Model</b> : 데이터 저장소와 관련된 역할을 수행합니다.
