@@ -13,7 +13,6 @@
 <img src='img/구조.JPG'>
 
 - 또한 controller, model, DTO의 \_\_init\_\_.py에 추상클래스를 정의함으로써 유연하게 대응할 수 있도록 구현했습니다.
-<hr>
 
 ## 2. Controller 기능
 구현한 Controller에서는 다음과 같은 기능을 수행합니다.
@@ -25,7 +24,6 @@
 - 입금
 - 출금
 - 잔고 조회
-<hr>
 
 ### 핀번호 포맷 정규식 설정 (set_pin_regex)
 - 핀번호 포맷(dict형)을 입력받아 핀번호 포맷을 설정합니다.
@@ -199,4 +197,80 @@ sel_account = accounts[1]
 
 # 선택한 계정의 잔액을 반환합니다.
 print(controller.get_balance(sel_account))
+```
+
+## 3. Model 기능
+구현한 Model에서는 다음과 같은 기능을 수행합니다.
+- 계정 데이터 저장
+- 핀번호에 해당하는 데이터 반환
+- 계정에 대한 계정 데이터 반환
+- 계정의 잔액 변경 및 저장
+
+### 계정 데이터 저장 (save_account)
+- 핀번호, 계정 이름, 잔액을 입력받아 계정을 생성하고 저장소에 저장합니다.
+- 이때 입력값들은 controller에 의해 검증되었다고 가정합니다.
+``` python
+from model.AtmModel import AtmModel
+model = AtmModel()
+'''
+핀번호 : '111-222-333333'
+계정 이름 : 'test'
+잔액 : 100
+의 데이터를 저장소에 저장합니다.
+'''
+model.save_account('111-222-333333', 'test', 100)
+# model 리포지토리에 저장된 데이터를 출력합니다.
+print('\n'.join(map(lambda x:str(x.__dict__), model.repository)))
+```
+
+### 핀번호에 해당하는 데이터 반환 (find_by_pin_num)
+- 핀번호를 입력받아 핀번호에 해당하는 계정들을 반환합니다.
+- 이때 반환되는 계정은 복수일 수 있습니다.
+``` python
+from model.AtmModel import AtmModel
+model = AtmModel()
+model.save_account('111-222-333333', 'test', 100)
+model.save_account('111-222-333333', 'test1', 2100)
+model.save_account('111-222-333333', 'test2', 100100)
+
+# 111-222-333333 에 해당하는 계정들을 반환합니다.
+accounts = model.find_by_pin_num('111-222-333333')
+for account in accounts:
+    print(account.__dict__)
+```
+
+### 계정에 대한 계정 데이터 반환 (find_by_account)
+- 계정에 해당하는 데이터 객체를 반환합니다.
+- 만약 찾는 계정이 없을 경우 KeyError를 발생시킵니다.
+``` python
+from model.AtmModel import AtmModel
+model = AtmModel()
+model.save_account('111-222-333333', 'test', 100)
+model.save_account('111-222-333333', 'test1', 2100)
+# 찾을 계정
+find_account = model.save_account('111-222-333333', 'test2', 100100)
+
+# 저장소에서 찾을 계정을 찾습니다.
+result = model.find_by_account(find_account)
+
+print('찾을 계정과 찾은 계정을 비교합니다.', find_account == result)
+```
+
+### 계정의 잔액 변경 및 저장 (update_balance_by_account)
+- 수정할 계정과 잔액을 받아 데이터를 업데이트합니다.
+- 이때 들어온 계정은 위의 find_by_account로 검증되며, balance는 controller에 의해 검증됩니다.
+``` python
+from model.AtmModel import AtmModel
+model = AtmModel()
+model.save_account('111-222-333333', 'test', 100)
+model.save_account('111-222-333333', 'test1', 2100)
+# 잔액을 변경할 계정
+find_account = model.save_account('111-222-333333', 'test2', 100100)
+
+# 0원으로 잔액 변경
+model.update_balance_by_account(find_account, 0)
+
+# 계정이 변경되었는지 확인
+find_account = model.find_by_account(find_account)
+print(find_account.balance)
 ```
