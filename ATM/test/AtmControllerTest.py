@@ -110,11 +110,68 @@ class AtmControllerTest(TestCase):
         result = model.find_by_account(test_result)
         self.assertEqual(test_result, result)
 
+    def test_set_pin_regex(self):
+        # 테스트 1. pin_format이 dict가 아닌 경우
+        controller = AtmController(AtmModel())
+        with self.assertRaises(TypeError):
+            controller.set_pin_regex(10)
+        
+        # 테스트 2. pin_format에 numbers가 없는 경우
+        controller = AtmController(AtmModel())
+        with self.assertRaises(KeyError):
+            controller.set_pin_regex({'split':'-'})
+        
+        # 테스트 3. pin_format에 split이 없는 경우
+        controller = AtmController(AtmModel())
+        with self.assertRaises(KeyError):
+            controller.set_pin_regex({'numbers':[1,2,3]})
+
+        # 테스트 4. pin_format['numbers']가 list가 아닌 경우
+        controller = AtmController(AtmModel())
+        test_pinformat = {'numbers':12, 'split':'-'}
+        with self.assertRaises(TypeError):
+            controller.set_pin_regex(test_pinformat)
+
+        # 테스트 5. pin_format['split']가 str이 아닌 경우
+        controller = AtmController(AtmModel())
+        test_pinformat = {'numbers':[1,2,3], 'split':10}
+        with self.assertRaises(TypeError):
+            controller.set_pin_regex(test_pinformat)
+
+    """
+    핀번호 포맷 검증 메소드를 테스트합니다.
+    """
+    def test_validate_pin_number_format(self):
+        # 테스트 1. pin_number가 str이 아닌 경우
+        controller = AtmController(AtmModel())
+        with self.assertRaises(TypeError):
+            controller.validate_pin_number_format(12)
+        
+        # 테스트 2. pin_regex가 정의되지 않은 경우
+        controller = AtmController(AtmModel())
+        with self.assertRaises(KeyError):
+            controller.validate_pin_number_format("123")
     """
     입금 메소드를 테스트합니다.
     """
     def test_deposit(self):
-        # 테스트 1. money가 음수인 경우
+        # 테스트 1. money가 int형이 아닌 경우
+        controller = AtmController(AtmModel())
+        controller.set_pin_regex(Config.pin_format)
+        pin_number = '111-222-333333'
+        account = 'song'
+        balance = 1000
+        test_Account = controller.register_account(pin_number, account, balance)
+        with self.assertRaises(TypeError):
+            controller.deposit(test_Account, 'test')
+
+        # 테스트 2. account가 Account형이 아닌 경우
+        controller = AtmController(AtmModel())
+        controller.set_pin_regex(Config.pin_format)
+        with self.assertRaises(TypeError):
+            controller.deposit(10, 10)
+
+        # 테스트 3. money가 음수인 경우
         controller = AtmController(AtmModel())
         controller.set_pin_regex(Config.pin_format)
         pin_number = '111-222-333333'
@@ -124,13 +181,7 @@ class AtmControllerTest(TestCase):
         with self.assertRaises(ValueError):
             controller.deposit(test_Account, -100)
 
-        # 테스트 2. account가 Account형이 아닌경우
-        controller = AtmController(AtmModel())
-        controller.set_pin_regex(Config.pin_format)
-        with self.assertRaises(ValueError):
-            controller.deposit(10, 10)
-        
-        # 테스트 3. 임의의 숫자에 대한 테스트
+        # 테스트 4. 임의의 숫자에 대한 테스트
         pin_number = '111-222-333333'
         account = 'song'
         for _ in range(100):
@@ -158,19 +209,18 @@ class AtmControllerTest(TestCase):
         account = 'song'
         balance = 1000
         test_Account = controller.register_account(pin_number, account, balance)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             controller.withdraw(test_Account, '123')
 
-        # 테스트 2. money가 음수인 경우
+        # 테스트 2. account가 Account형이 아닌경우
+        controller = AtmController(AtmModel())
+        with self.assertRaises(TypeError):
+            controller.withdraw(10, 10)
+
+        # 테스트 3. money가 음수인 경우
         controller = AtmController(AtmModel())
         with self.assertRaises(ValueError):
             controller.withdraw(test_Account, -100)
-
-        # 테스트 3. account가 Account형이 아닌경우
-        controller = AtmController(AtmModel())
-        with self.assertRaises(ValueError):
-            controller.withdraw(10, 10)
-        
         
         # 테스트 4. 잔액 부족
         controller = AtmController(AtmModel())
@@ -208,6 +258,10 @@ class AtmControllerTest(TestCase):
                 # 출금한 이후의 잔액이 나오는지 확인
                 self.assertEqual(test_result, result)
 
+    def test_get_balance(self):
+        controller = AtmController(AtmModel())
+        with self.assertRaises(TypeError):
+            controller.get_balance(12)
 
 # unittest 실행
 if __name__ == '__main__':
