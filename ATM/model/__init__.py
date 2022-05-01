@@ -33,9 +33,3 @@ class AtmModelBase(metaclass=ABCMeta):
     def update_balance_by_account(self, account, balance:int):
         pass
     
-    """
-    모든 계정을 보여주는 메소드
-    """
-    @abstractmethod
-    def show_all(self):
-        pass
