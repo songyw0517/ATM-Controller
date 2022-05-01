@@ -110,6 +110,9 @@ class AtmControllerTest(TestCase):
         result = model.find_by_account(test_result)
         self.assertEqual(test_result, result)
 
+    """
+    핀번호 포맷 정규식 설정 메소드를 테스트합니다.
+    """
     def test_set_pin_regex(self):
         # 테스트 1. pin_format이 dict가 아닌 경우
         controller = AtmController(AtmModel())
@@ -138,6 +141,12 @@ class AtmControllerTest(TestCase):
         with self.assertRaises(TypeError):
             controller.set_pin_regex(test_pinformat)
 
+        # 테스트 6. 설정이 제대로 되었는지 확인
+        test_pinformat = {'numbers':[1,3,2], 'split':'-'}
+        controller.set_pin_regex(test_pinformat)
+        result = '[0-9]{1}-[0-9]{3}-[0-9]{2}'
+        test_result = controller.pin_regex
+        self.assertEqual(test_result, result)
     """
     핀번호 포맷 검증 메소드를 테스트합니다.
     """
@@ -258,6 +267,9 @@ class AtmControllerTest(TestCase):
                 # 출금한 이후의 잔액이 나오는지 확인
                 self.assertEqual(test_result, result)
 
+    """
+    잔액 반환 메소드 테스트
+    """
     def test_get_balance(self):
         controller = AtmController(AtmModel())
         with self.assertRaises(TypeError):
