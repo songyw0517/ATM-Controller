@@ -13,11 +13,11 @@ AtmController과 관련된 테스트를 수행합니다.
 '''
 class AtmControllerTest(TestCase):
     """ 
-    pin 번호 검증 메소드를 테스트합니다. 
+    핀번호 검증 메소드를 테스트합니다. 
     
-    설정된 pin 번호 포맷 : XXX-XXX-XXXXXX, X : 숫자
-    테스트 pin 번호 포맷 : XX-XXX-XXXX, X : 숫자
-    - 설정된 pin 번호 포맷과 다르기에 에러가 발생해야합니다.
+    설정된 핀번호 포맷 : XXX-XXX-XXXXXX, X : 숫자
+    테스트 핀번호 포맷 : XX-XXX-XXXX, X : 숫자
+    - 설정된 핀번호 포맷과 다르기에 에러가 발생해야합니다.
     """
     def test_validate_pin_number_format(self):
         controller = AtmController(AtmModel())

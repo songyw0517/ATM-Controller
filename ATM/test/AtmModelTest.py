@@ -18,7 +18,7 @@ class AtmModelTest(TestCase):
         result = atm_model.save_account(pin_number, account, balance)
         self.assertIn(result, atm_model.repository)
         
-    """ pin 번호로 계정을 찾는 메소드를 테스트합니다. """
+    """ 핀번호로 계정을 찾는 메소드를 테스트합니다. """
     def test_find_by_pin_num(self):
         atm_model = AtmModel()
         # 테스트 1. 아래와 같은 계정을 저장한 후,

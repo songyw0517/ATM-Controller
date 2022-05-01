@@ -17,14 +17,16 @@ class AtmModel(AtmModelBase):
     계정을 생성하고 저장합니다.
     입력된 변수는 컨트롤러에 의해 검증되었습니다.
     """
-    def save_account(self, pin_number, account, balance):        
+    def save_account(self, pin_number, account, balance):  
+        
+              
         new_account = Account(pin_number, account, balance)
         self.repository.append(new_account)
         return new_account
 
     """
     pin_num에 해당하는 계정들을 찾습니다.
-    pin 번호는 컨트롤러에 의해 검증되었습니다.
+    핀번호는 컨트롤러에 의해 검증되었습니다.
     """
     def find_by_pin_num(self, pin_num: str):
         result = []

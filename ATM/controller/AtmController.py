@@ -132,9 +132,7 @@ class AtmController(AtmControllerBase):
     def get_balance(self, account):
         if type(account) is not Account:
             raise TypeError('account type is Account, but now account type is %s'%type(account))
-
-        find_account = self.atm_model.find_by_account(account)
-        return find_account.balance
+        return account.balance
 
 
 
