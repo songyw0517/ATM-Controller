@@ -14,8 +14,8 @@ class AtmModel(AtmModelBase):
         super().__init__()
         self.repository = []
     """ 
-    입력값을 통해 계정을 생성하고 리포지토리에 저장합니다. 
-    입력된 pin_number, account, balance는 AtmController에 의해 검증되었습니다.
+    계정을 생성하고 저장합니다.
+    입력된 변수는 컨트롤러에 의해 검증되었습니다.
     """
     def save_account(self, pin_number, account, balance):        
         new_account = Account(pin_number, account, balance)
@@ -23,8 +23,8 @@ class AtmModel(AtmModelBase):
         return new_account
 
     """
-    pin 번호를 입력받아, pin_num에 해당하는 계정들을 반환합니다.
-    pin 번호는 AtmController에 의해 검증되었습니다.
+    pin_num에 해당하는 계정들을 찾습니다.
+    pin 번호는 컨트롤러에 의해 검증되었습니다.
     """
     def find_by_pin_num(self, pin_num: str):
         result = []
@@ -34,28 +34,31 @@ class AtmModel(AtmModelBase):
         return result
 
     """
-    account를 입력받아, account에 해당하는 계정을 반환합니다.
+    account에 해당하는 계정을 찾습니다.
+    account는 컨트롤러에 의해 검증되었습니다.
     """
     def find_by_account(self, account):
         if account in self.repository:
             account_idx = self.repository.index(account)
             return self.repository[account_idx]
         else:
-            raise KeyError("account에 해당하는 계정이 없습니다.")
-
-
+            raise KeyError("account not found.")
 
     """
-    account와 balance를 입력받아, account의 잔액을 balance로 수정합니다.
+    account의 잔액을 balance로 업데이트합니다.
+    입력된 변수는 컨트롤러에 의해 검증되었습니다.
     """
     def update_balance_by_account(self, account:Account, balance:int):
         find_account = self.find_by_account(account)
         find_account.balance = balance
         return account
 
+    """ 모든 계정을 반환합니다. """
     def show_all(self):
+        result = []
         for account in self.repository:
-            print(account.__dict__)
+            result.append(account.__dict__)
+        return result
 
 if __name__ == '__main__':
     atm_model = AtmModel()
